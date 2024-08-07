@@ -45,7 +45,7 @@ public class TestNGTodo3 {
         caps.setCapability("name", m.getName() + " - " + this.getClass().getName());
         //caps.setCapability("geoLocation", "NZ");
         caps.setCapability("performance", false);
-        caps.setCapability("tunnel",false);
+        caps.setCapability("tunnel",true);
 
 
 
