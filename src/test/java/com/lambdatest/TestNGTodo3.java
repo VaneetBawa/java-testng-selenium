@@ -26,7 +26,7 @@ public class TestNGTodo3 {
     private RemoteWebDriver driver;
     private String Status = "failed";
     
-    Tunnel t;
+    //Tunnel t;
 
 
     @BeforeMethod
@@ -43,9 +43,9 @@ public class TestNGTodo3 {
         caps.setCapability("version", "latest");
         caps.setCapability("build", "cengage");
         caps.setCapability("name", m.getName() + " - " + this.getClass().getName());
-        caps.setCapability("geoLocation", "NZ");
-        caps.setCapability("performance", true);
-        caps.setCapability("tunnel",true);
+        //caps.setCapability("geoLocation", "NZ");
+        caps.setCapability("performance", false);
+        caps.setCapability("tunnel",false);
 
 
 
