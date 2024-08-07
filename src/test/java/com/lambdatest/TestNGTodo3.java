@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 
 public class TestNGTodo3 {
 
-    private <ThreadLocal>RemoteWebDriver driver;
+    private RemoteWebDriver driver;
     private String Status = "failed";
     
     //Tunnel t;
@@ -61,7 +61,7 @@ public class TestNGTodo3 {
         // start tunnel
         // t.start(options);
 
-        driver = new <ThreadLocal>RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), caps);
+        driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), caps);
     }
 
     @Test
