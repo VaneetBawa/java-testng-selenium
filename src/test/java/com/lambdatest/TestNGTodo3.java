@@ -41,7 +41,7 @@ public class TestNGTodo3 {
         caps.setCapability("platform", "Windows 10");
         caps.setCapability("browserName", "chrome");
         caps.setCapability("version", "latest");
-        caps.setCapability("build", "cengage");
+        caps.setCapability("build", "cengage_test");
         caps.setCapability("name", m.getName() + " - " + this.getClass().getName());
         //caps.setCapability("geoLocation", "NZ");
         caps.setCapability("performance", false);
