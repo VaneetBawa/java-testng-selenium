@@ -34,8 +34,10 @@ public class TestNGTodo2 {
 
         String hub = "@hub.lambdatest.com/wd/hub";
 
+        String buildname = System.getenv("LT_BUILD_NAME");
+
         DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("build",  System.getenv("LT_BUILD_NAME"));
+        caps.setCapability("build",  buildname);
         caps.setCapability("platform", "Windows 10");
         caps.setCapability("browserName", "chrome");
         caps.setCapability("version", "latest");
