@@ -40,11 +40,13 @@ public class TestNGTodo2 {
         caps.setCapability("build",  buildname);
         caps.setCapability("platform", "Windows 10");
         caps.setCapability("browserName", "chrome");
-        caps.setCapability("version", "latest");
+        caps.setCapability("version", "109");
       //  caps.setCapability("build", "TestNG With Java");
         caps.setCapability("name", m.getName() + this.getClass().getName());
         caps.setCapability("plugin", "git-testng");
-         caps.setCapability("tunnel", true);
+         caps.setCapability("tunnel", false);
+        caps.setCapability("network", true);
+        caps.setCapability("network.har", true);
 
         /*
         Enable Smart UI Project
@@ -62,7 +64,9 @@ public class TestNGTodo2 {
         String spanText;
         System.out.println("Loading Url");
 
-        driver.get("https://lambdatest.github.io/sample-todo-app/");
+       // driver.get("https://lambdatest.github.io/sample-todo-app/");
+
+        driver.get("https://www.oziva.in");
 
         System.out.println("Checking Box");
         driver.findElement(By.name("li1")).click();
