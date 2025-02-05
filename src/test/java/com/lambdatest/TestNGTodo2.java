@@ -18,6 +18,8 @@ public class TestNGTodo2 {
     private RemoteWebDriver driver;
     private String Status = "failed";
 
+    Tunnel t;
+
     @BeforeMethod
     public void setup(Method m, ITestContext ctx) throws MalformedURLException {
         String username = System.getenv("LT_USERNAME") == null ? "Your LT Username" : System.getenv("LT_USERNAME");
@@ -44,7 +46,7 @@ public class TestNGTodo2 {
       //  caps.setCapability("build", "TestNG With Java");
         caps.setCapability("name", m.getName() + this.getClass().getName());
         caps.setCapability("plugin", "git-testng");
-         caps.setCapability("tunnel", false);
+         caps.setCapability("tunnel", true);
         caps.setCapability("network", true);
         caps.setCapability("network.har", true);
 
@@ -55,6 +57,18 @@ public class TestNGTodo2 {
 
         String[] Tags = new String[] { "Feature", "Magicleap", "Severe" };
         caps.setCapability("tags", Tags);
+
+        t = new Tunnel();
+        HashMap<String, String> options = new HashMap<String, String>();
+        options.put("user", username);
+        options.put("key", authkey);
+        options.put("logFile", "src/test");
+        options.put("mode", "tcp");
+        options.put("mitm", "--mitm");
+        options.put("verbose", "--verbose");
+
+
+        t.start(options);
 
         driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), caps);
     }
@@ -124,6 +138,7 @@ public class TestNGTodo2 {
     public void tearDown() {
         driver.executeScript("lambda-status=" + Status);
         driver.quit();
+        t.stop();
     }
 
 }
