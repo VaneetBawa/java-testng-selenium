@@ -56,6 +56,11 @@
 			<artifactId>testng</artifactId>
 			<version>7.7.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.lambdatest</groupId>
+			<artifactId>lambdatest-tunnel-binary</artifactId>
+			<version>1.0.8</version>
+		</dependency>
 
 	</dependencies>
 
