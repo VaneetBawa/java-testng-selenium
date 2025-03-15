@@ -58,17 +58,17 @@ public class TestNGTodo2 {
         String[] Tags = new String[] { "Feature", "Magicleap", "Severe" };
         caps.setCapability("tags", Tags);
 
-        t = new Tunnel();
-        HashMap<String, String> options = new HashMap<String, String>();
-        options.put("user", username);
-        options.put("key", authkey);
-        options.put("logFile", "src/test");
-        options.put("mode", "tcp");
-        options.put("mitm", "--mitm");
-        options.put("verbose", "--verbose");
+        // t = new Tunnel();
+        // HashMap<String, String> options = new HashMap<String, String>();
+        // options.put("user", username);
+        // options.put("key", authkey);
+        // options.put("logFile", "src/test");
+        // options.put("mode", "tcp");
+        // options.put("mitm", "--mitm");
+        // options.put("verbose", "--verbose");
 
 
-        t.start(options);
+        // t.start(options);
 
         driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), caps);
     }
@@ -138,7 +138,7 @@ public class TestNGTodo2 {
     public void tearDown() {
         driver.executeScript("lambda-status=" + Status);
         driver.quit();
-        t.stop();
+      //  t.stop();
     }
 
 }
