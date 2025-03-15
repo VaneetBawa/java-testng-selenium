@@ -42,11 +42,11 @@ public class TestNGTodo2 {
         caps.setCapability("build",  buildname);
         caps.setCapability("platform", "Windows 10");
         caps.setCapability("browserName", "chrome");
-        caps.setCapability("version", "109");
+        caps.setCapability("version", "latest");
       //  caps.setCapability("build", "TestNG With Java");
         caps.setCapability("name", m.getName() + this.getClass().getName());
         caps.setCapability("plugin", "git-testng");
-         caps.setCapability("tunnel", true);
+        // caps.setCapability("tunnel", true);
         caps.setCapability("network", true);
         caps.setCapability("network.har", true);
 
