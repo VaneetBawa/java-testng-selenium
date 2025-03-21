@@ -41,7 +41,7 @@ public class TestNGTodo2 {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setCapability("build",  buildname);
         caps.setCapability("platform", "Windows 10");
-        caps.setCapability("browserName", "chrome");
+        caps.setCapability("browserName", "Firefox");
         caps.setCapability("version", "latest");
       //  caps.setCapability("build", "TestNG With Java");
         caps.setCapability("name", m.getName() + this.getClass().getName());
