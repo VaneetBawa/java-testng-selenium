@@ -80,8 +80,6 @@ public class TestNGTodo2 {
 
         driver.get("https://lambdatest.github.io/sample-todo-app/");
 
-       // driver.get("https://www.oziva.in");
-
         System.out.println("Checking Box");
         driver.findElement(By.name("li1")).click();
 
