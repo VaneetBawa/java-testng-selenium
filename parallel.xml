@@ -3,9 +3,9 @@
 <suite thread-count="10" parallel="methods" name="Suite">
   <test name="Test">
     <classes>
-      <class name="com.lambdatest.TestNGTodo3"/>
-<!--       <class name="com.lambdatest.TestNGTodo2"/>
-      <class name="com.lambdatest.TestNGTodo3"/> -->
+      <class name="com.lambdatest.TestNGTodo1"/>
+      <class name="com.lambdatest.TestNGTodo2"/>
+<!--       <class name="com.lambdatest.TestNGTodo3"/> -->
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
