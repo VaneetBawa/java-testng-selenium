@@ -59,7 +59,7 @@ public class TestNGTodo2 {
         // Optional tagging
         ltOptions.put("tags", Arrays.asList("parallel", "testng", browserName));
 
-        if (browserName.equals("chrome")) {
+        if (browserName.equals("Chrome")) {
             ChromeOptions options = new ChromeOptions();
             options.setPlatformName(platform);
             options.setBrowserVersion(browserVersion);
