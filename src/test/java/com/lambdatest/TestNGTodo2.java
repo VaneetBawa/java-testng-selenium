@@ -4,92 +4,67 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+
 import org.testng.Assert;
 import org.testng.ITestContext;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 public class TestNGTodo2 {
 
     private RemoteWebDriver driver;
     private String Status = "failed";
 
-   // Tunnel t;
+    @DataProvider(name = "browserProvider", parallel = true)
+    public Object[][] getBrowsers(ITestContext ctx) {
+        String browsersJson = System.getenv("LT_BROWSERS");
+        JSONArray browsersArray = new JSONArray(browsersJson);
+
+        Object[][] browserConfigs = new Object[browsersArray.length()][1];
+        for (int i = 0; i < browsersArray.length(); i++) {
+            browserConfigs[i][0] = browsersArray.getJSONObject(i);
+        }
+        return browserConfigs;
+    }
 
     @BeforeMethod
-    public void setup(Method m, ITestContext ctx) throws MalformedURLException {
+    @Parameters({"browserConfig"})
+    public void setup(Method m, Object[] testData) throws MalformedURLException {
+        JSONObject config = (JSONObject) testData[0];
+
         String username = System.getenv("LT_USERNAME") == null ? "Your LT Username" : System.getenv("LT_USERNAME");
         String authkey = System.getenv("LT_ACCESS_KEY") == null ? "Your LT AccessKey" : System.getenv("LT_ACCESS_KEY");
-        ;
-        
-        /*
-        Steps to run Smart UI project (https://beta-smartui.lambdatest.com/)
-        Step - 1 : Change the hub URL to @beta-smartui-hub.lambdatest.com/wd/hub
-        Step - 2 : Add "smartUI.project": "<Project Name>" as a capability above
-        Step - 3 : Add "((JavascriptExecutor) driver).executeScript("smartui.takeScreenshot");" code wherever you need to take a screenshot
-        Note: for additional capabilities navigate to https://www.lambdatest.com/support/docs/test-settings-options/
-        */
-
         String hub = "@hub.lambdatest.com/wd/hub";
-
         String buildname = System.getenv("LT_BUILD_NAME");
 
         DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("build",  buildname);
-        caps.setCapability("platform", System.getenv("LT_PLATFORM"));
-        caps.setCapability("browserName", System.getenv("LT_BROWSERS"));
-        caps.setCapability("version", System.getenv("LT_BROWSER_VERSION"));
-      //  caps.setCapability("build", "TestNG With Java");
+        caps.setCapability("build", buildname);
+        caps.setCapability("platform", config.getString("operatingSystem"));
+        caps.setCapability("browserName", config.getString("browserName"));
+        caps.setCapability("version", config.getString("browserVersion"));
+        caps.setCapability("resolution", config.getString("resolution"));
         caps.setCapability("name", m.getName() + this.getClass().getName());
         caps.setCapability("plugin", "git-testng");
-        // caps.setCapability("tunnel", true);
-        caps.setCapability("network", true);
-        caps.setCapability("network.har", true);
 
-        /*
-        Enable Smart UI Project
-        caps.setCapability("smartUI.project", "<Project Name>");
-        */
-
-        String[] Tags = new String[] { "Feature", "Magicleap", "Severe" };
+        String[] Tags = new String[]{"Feature", "Magicleap", "Severe"};
         caps.setCapability("tags", Tags);
-
-        // t = new Tunnel();
-        // HashMap<String, String> options = new HashMap<String, String>();
-        // options.put("user", username);
-        // options.put("key", authkey);
-        // options.put("logFile", "src/test");
-        // options.put("mode", "tcp");
-        // options.put("mitm", "--mitm");
-        // options.put("verbose", "--verbose");
-
-
-        // t.start(options);
 
         driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), caps);
     }
 
-    @Test
-    public void basicTest() throws InterruptedException {
+    @Test(dataProvider = "browserProvider")
+    public void basicTest(JSONObject config) throws InterruptedException {
         String spanText;
-        System.out.println("Loading Url");
-
+        System.out.println("Running on: " + config.toString());
         driver.get("https://lambdatest.github.io/sample-todo-app/");
 
-        System.out.println("Checking Box");
         driver.findElement(By.name("li1")).click();
-
-        System.out.println("Checking Another Box");
         driver.findElement(By.name("li2")).click();
-
-        System.out.println("Checking Box");
         driver.findElement(By.name("li3")).click();
-
-        System.out.println("Checking Another Box");
         driver.findElement(By.name("li4")).click();
 
         driver.findElement(By.id("sampletodotext")).sendKeys(" List Item 6");
@@ -101,42 +76,28 @@ public class TestNGTodo2 {
         driver.findElement(By.id("sampletodotext")).sendKeys(" List Item 8");
         driver.findElement(By.id("addbutton")).click();
 
-        System.out.println("Checking Another Box");
         driver.findElement(By.name("li1")).click();
-
-        System.out.println("Checking Another Box");
         driver.findElement(By.name("li3")).click();
-
-        System.out.println("Checking Another Box");
         driver.findElement(By.name("li7")).click();
-
-        System.out.println("Checking Another Box");
         driver.findElement(By.name("li8")).click();
 
-        System.out.println("Entering Text");
         driver.findElement(By.id("sampletodotext")).sendKeys("Get Taste of Lambda and Stick to It");
-
         driver.findElement(By.id("addbutton")).click();
-
-        System.out.println("Checking Another Box");
         driver.findElement(By.name("li9")).click();
-
-        // Let's also assert that the todo we added is present in the list.
 
         spanText = driver.findElementByXPath("/html/body/div/div/div/ul/li[9]/span").getText();
         Assert.assertEquals("Get Taste of Lambda and Stick to It", spanText);
+
         Status = "passed";
         Thread.sleep(150);
-
         System.out.println("TestFinished");
-
     }
 
     @AfterMethod
     public void tearDown() {
-        driver.executeScript("lambda-status=" + Status);
-        driver.quit();
-      //  t.stop();
+        if (driver != null) {
+            driver.executeScript("lambda-status=" + Status);
+            driver.quit();
+        }
     }
-
 }
