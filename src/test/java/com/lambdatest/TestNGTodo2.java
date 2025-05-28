@@ -45,7 +45,7 @@ public class TestNGTodo2 {
         String hub = "@hub.lambdatest.com/wd/hub";
         String buildname = System.getenv("LT_BUILD_NAME");
 
-        String browserName = config.getString("browserName").toLowerCase();
+        String browserName = config.getString("browserName");
         String browserVersion = config.getString("browserVersion");
         String platform = config.getString("operatingSystem");
 
@@ -66,7 +66,7 @@ public class TestNGTodo2 {
             options.setCapability("LT:Options", ltOptions);
             driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), options);
 
-        } else if (browserName.equals("microsoftedge")) {
+        } else if (browserName.equals("MicrosoftEdge")) {
             EdgeOptions options = new EdgeOptions();
             options.setPlatformName(platform);
             options.setBrowserVersion(browserVersion);
