@@ -66,7 +66,7 @@ public class TestNGTodo2 {
             options.setCapability("LT:Options", ltOptions);
             driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), options);
 
-        } else if (browserName.equals("MicrosoftEdge")) {
+        } else if (browserName.equals("microsoftedge")) {
             EdgeOptions options = new EdgeOptions();
             options.setPlatformName(platform);
             options.setBrowserVersion(browserVersion);
