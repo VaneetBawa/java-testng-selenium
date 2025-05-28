@@ -3,6 +3,8 @@ package com.lambdatest;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,24 +20,28 @@ public class TestNGTodo2 {
 
     private RemoteWebDriver driver;
     private String Status = "failed";
-    private ThreadLocal<JSONObject> browserConfig = new ThreadLocal<>();
+    private JSONObject config;
 
-    @DataProvider(name = "browserProvider", parallel = true)
-    public Object[][] getBrowsers(ITestContext ctx) {
+    public TestNGTodo2(JSONObject config) {
+        this.config = config;
+    }
+
+    @Factory
+    @Parameters({"LT_BROWSERS"})
+    public static Object[] createInstances() {
         String browsersJson = System.getenv("LT_BROWSERS");
         JSONArray browsersArray = new JSONArray(browsersJson);
 
-        Object[][] browserConfigs = new Object[browsersArray.length()][1];
+        List<Object> tests = new ArrayList<>();
         for (int i = 0; i < browsersArray.length(); i++) {
-            browserConfigs[i][0] = browsersArray.getJSONObject(i);
+            JSONObject browserConfig = browsersArray.getJSONObject(i);
+            tests.add(new TestNGTodo2(browserConfig));
         }
-        return browserConfigs;
+        return tests.toArray();
     }
 
     @BeforeMethod
     public void setup(Method m) throws MalformedURLException {
-        JSONObject config = browserConfig.get();
-
         String username = System.getenv("LT_USERNAME") == null ? "Your LT Username" : System.getenv("LT_USERNAME");
         String authkey = System.getenv("LT_ACCESS_KEY") == null ? "Your LT AccessKey" : System.getenv("LT_ACCESS_KEY");
         String hub = "@hub.lambdatest.com/wd/hub";
@@ -56,11 +62,8 @@ public class TestNGTodo2 {
         driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), caps);
     }
 
-    @Test(dataProvider = "browserProvider")
-    public void basicTest(JSONObject config) throws InterruptedException {
-        // Store config so @BeforeMethod can access it
-        browserConfig.set(config);
-
+    @Test
+    public void basicTest() throws InterruptedException {
         String spanText;
         System.out.println("Running on: " + config.toString());
 
