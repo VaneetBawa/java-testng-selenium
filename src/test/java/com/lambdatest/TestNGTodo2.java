@@ -18,6 +18,7 @@ public class TestNGTodo2 {
 
     private RemoteWebDriver driver;
     private String Status = "failed";
+    private ThreadLocal<JSONObject> browserConfig = new ThreadLocal<>();
 
     @DataProvider(name = "browserProvider", parallel = true)
     public Object[][] getBrowsers(ITestContext ctx) {
@@ -32,9 +33,8 @@ public class TestNGTodo2 {
     }
 
     @BeforeMethod
-    @Parameters({"browserConfig"})
-    public void setup(Method m, Object[] testData) throws MalformedURLException {
-        JSONObject config = (JSONObject) testData[0];
+    public void setup(Method m) throws MalformedURLException {
+        JSONObject config = browserConfig.get();
 
         String username = System.getenv("LT_USERNAME") == null ? "Your LT Username" : System.getenv("LT_USERNAME");
         String authkey = System.getenv("LT_ACCESS_KEY") == null ? "Your LT AccessKey" : System.getenv("LT_ACCESS_KEY");
@@ -58,8 +58,12 @@ public class TestNGTodo2 {
 
     @Test(dataProvider = "browserProvider")
     public void basicTest(JSONObject config) throws InterruptedException {
+        // Store config so @BeforeMethod can access it
+        browserConfig.set(config);
+
         String spanText;
         System.out.println("Running on: " + config.toString());
+
         driver.get("https://lambdatest.github.io/sample-todo-app/");
 
         driver.findElement(By.name("li1")).click();
@@ -69,10 +73,8 @@ public class TestNGTodo2 {
 
         driver.findElement(By.id("sampletodotext")).sendKeys(" List Item 6");
         driver.findElement(By.id("addbutton")).click();
-
         driver.findElement(By.id("sampletodotext")).sendKeys(" List Item 7");
         driver.findElement(By.id("addbutton")).click();
-
         driver.findElement(By.id("sampletodotext")).sendKeys(" List Item 8");
         driver.findElement(By.id("addbutton")).click();
 
