@@ -3,17 +3,16 @@ package com.lambdatest;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import org.testng.Assert;
-import org.testng.ITestContext;
 import org.testng.annotations.*;
 
 public class TestNGTodo2 {
@@ -27,7 +26,6 @@ public class TestNGTodo2 {
     }
 
     @Factory
-    @Parameters({"LT_BROWSERS"})
     public static Object[] createInstances() {
         String browsersJson = System.getenv("LT_BROWSERS");
         JSONArray browsersArray = new JSONArray(browsersJson);
@@ -47,19 +45,37 @@ public class TestNGTodo2 {
         String hub = "@hub.lambdatest.com/wd/hub";
         String buildname = System.getenv("LT_BUILD_NAME");
 
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("build", buildname);
-        caps.setCapability("platform", config.getString("operatingSystem"));
-        caps.setCapability("browserName", config.getString("browserName"));
-        caps.setCapability("version", config.getString("browserVersion"));
-        caps.setCapability("resolution", config.getString("resolution"));
-        caps.setCapability("name", m.getName() + this.getClass().getName());
-        caps.setCapability("plugin", "git-testng");
+        String browserName = config.getString("browserName").toLowerCase();
+        String browserVersion = config.getString("browserVersion");
+        String platform = config.getString("operatingSystem");
 
-        String[] Tags = new String[]{"Feature", "Magicleap", "Severe"};
-        caps.setCapability("tags", Tags);
+        Map<String, Object> ltOptions = new HashMap<>();
+        ltOptions.put("project", "Cross Browser Test");
+        ltOptions.put("build", buildname);
+        ltOptions.put("name", m.getName() + "_" + browserName);
+        ltOptions.put("selenium_version", "4.0.0");
+        ltOptions.put("w3c", true);
 
-        driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), caps);
+        // Optional tagging
+        ltOptions.put("tags", Arrays.asList("parallel", "testng", browserName));
+
+        if (browserName.equals("chrome")) {
+            ChromeOptions options = new ChromeOptions();
+            options.setPlatformName(platform);
+            options.setBrowserVersion(browserVersion);
+            options.setCapability("LT:Options", ltOptions);
+            driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), options);
+
+        } else if (browserName.equals("edge")) {
+            EdgeOptions options = new EdgeOptions();
+            options.setPlatformName(platform);
+            options.setBrowserVersion(browserVersion);
+            options.setCapability("LT:Options", ltOptions);
+            driver = new RemoteWebDriver(new URL("https://" + username + ":" + authkey + hub), options);
+
+        } else {
+            throw new IllegalArgumentException("Unsupported browser: " + browserName);
+        }
     }
 
     @Test
@@ -90,8 +106,8 @@ public class TestNGTodo2 {
         driver.findElement(By.id("addbutton")).click();
         driver.findElement(By.name("li9")).click();
 
-        spanText = driver.findElementByXPath("/html/body/div/div/div/ul/li[9]/span").getText();
-        Assert.assertEquals("Get Taste of Lambda and Stick to It", spanText);
+        spanText = driver.findElement(By.xpath("/html/body/div/div/div/ul/li[9]/span")).getText();
+        Assert.assertEquals(spanText, "Get Taste of Lambda and Stick to It");
 
         Status = "passed";
         Thread.sleep(150);
