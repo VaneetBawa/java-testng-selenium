@@ -25,17 +25,23 @@ public class TestNGTodo2 {
         this.config = config;
     }
 
-    @Factory
-    public static Object[] createInstances() {
+    // ✅ Use a data provider to supply JSON configurations
+    @DataProvider(name = "browsers")
+    public static Object[][] browsersProvider() {
         String browsersJson = System.getenv("LT_BROWSERS");
         JSONArray browsersArray = new JSONArray(browsersJson);
 
-        List<Object> tests = new ArrayList<>();
+        Object[][] configs = new Object[browsersArray.length()][1];
         for (int i = 0; i < browsersArray.length(); i++) {
-            JSONObject browserConfig = browsersArray.getJSONObject(i);
-            tests.add(new TestNGTodo2(browserConfig));
+            configs[i][0] = browsersArray.getJSONObject(i);
         }
-        return tests.toArray();
+        return configs;
+    }
+
+    // ✅ Factory uses data provider for dynamic instantiation
+    @Factory(dataProvider = "browsers")
+    public static Object[] createInstances(JSONObject config) {
+        return new Object[]{ new TestNGTodo2(config) };
     }
 
     @BeforeMethod
@@ -55,9 +61,6 @@ public class TestNGTodo2 {
         ltOptions.put("name", m.getName() + "_" + browserName);
         ltOptions.put("selenium_version", "4.0.0");
         ltOptions.put("w3c", true);
-
-        // Optional tagging
-        ltOptions.put("tags", Arrays.asList("parallel", "testng", browserName));
 
         if (browserName.equals("Chrome")) {
             ChromeOptions options = new ChromeOptions();
